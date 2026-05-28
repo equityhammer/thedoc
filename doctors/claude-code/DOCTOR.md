@@ -104,6 +104,11 @@ Read the Framework path from CLAUDE.md first. Templates live at `<framework>/com
 - Explain what it does: creates cc-*/cn-*/dcc-*/dcn-* shortcuts for every project folder, opens each in a named tmux window
 - Set up sourcing in `.bashrc` if not already there
 - Run the generator to create initial aliases
+- After running, check `/tmp/cc-aliases.err.log` for suffix collisions.
+  If any exist, tell the user about `~/.cc-suffix-overrides`: a bash
+  file with `declare -A SUFFIX_OVERRIDES; SUFFIX_OVERRIDES[folder]=xx`
+  entries that pin custom abbreviations. Offer to draft the overrides
+  file with the colliding folders pre-populated, then re-run.
 
 ### 3. SSH Shortcuts
 - Check: does `~/.ssh/config` exist? What Host entries are there?

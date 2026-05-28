@@ -6,13 +6,65 @@
 #
 # All aliases run inside a single tmux session ("claude").
 # Each project gets a named window. If the window already exists,
-# the alias switches to it instead of creating a duplicate.
+# the alias switches/attaches to it instead of creating a duplicate.
+#
+# Suffix derivation (folder name -> short verb suffix):
+#   Default: initials of hyphenated parts. Examples:
+#     command-line-voice           -> clv
+#     no-more-time-blindness       -> nmtb
+#     marketplace-valet-bots       -> mvb
+#
+# Overrides:
+#   Place a file at ~/.cc-suffix-overrides to pin custom suffixes when
+#   the default rule produces a collision or you want a different
+#   abbreviation. The file is bash, sourced by this generator:
+#
+#     # ~/.cc-suffix-overrides
+#     declare -A SUFFIX_OVERRIDES
+#     SUFFIX_OVERRIDES[openclaw-doctor]=ocd
+#     SUFFIX_OVERRIDES[claude-doctor]=cld
+#
+# Collisions:
+#   When two folders compute (or claim, via overrides) the same suffix,
+#   the first one wins; the second is logged to /tmp/cc-aliases.err.log
+#   and skipped. Edit ~/.cc-suffix-overrides to resolve.
+#
+# Adapted from Laura Land's claude-alias-system spec (2026-05-28).
+# Original ships a richer zsh + tmux variant matrix (tcc/tcn/tdcc/tdcn);
+# thedoc's flavor keeps everything wrapped in one tmux session by
+# default so bash and zsh users get the same persistence behavior.
+
+# Associative arrays need bash 4+. macOS ships bash 3.2 - users there
+# need `brew install bash` to run this generator. The OUTPUT file uses
+# only plain `alias` statements that work in any bash 3.2+ or zsh.
+if [ "${BASH_VERSINFO[0]:-0}" -lt 4 ]; then
+    echo "" >&2
+    echo "  generate-cc-aliases needs bash 4 or newer (you have ${BASH_VERSION:-unknown})." >&2
+    echo "  On macOS:  brew install bash" >&2
+    echo "  Then re-run this generator. The generated alias file works in any" >&2
+    echo "  bash 3.2+ or zsh, so your shell rc doesn't need to change." >&2
+    echo "" >&2
+    exit 1
+fi
 
 GITHUB_DIR="$HOME/GitHub"
 ALIAS_FILE="$HOME/.cc-project-aliases"
+OVERRIDES_FILE="$HOME/.cc-suffix-overrides"
+ERROR_LOG="/tmp/cc-aliases.err.log"
 TMUX_SESSION="claude"
 
 : > "$ALIAS_FILE"
+: > "$ERROR_LOG"
+
+# Load user-pinned suffix overrides (if any).
+declare -A SUFFIX_OVERRIDES
+if [ -f "$OVERRIDES_FILE" ]; then
+    # shellcheck disable=SC1090
+    source "$OVERRIDES_FILE"
+fi
+
+# Track claimed suffixes so we can detect collisions across folders.
+declare -A SUFFIX_CLAIMED_BY
 
 # Helper function: open (or switch to) a named tmux window and run a command
 cat >> "$ALIAS_FILE" << 'FUNC'
@@ -54,6 +106,17 @@ _cc_tmux() {
 }
 FUNC
 
+# Compute the default suffix for a folder name: initials of hyphenated
+# parts. Example: command-line-voice -> clv
+_default_suffix() {
+    echo "$1" | sed 's/\([a-zA-Z0-9]\)[a-zA-Z0-9]*/\1/g; s/-//g'
+}
+
+# Track folders/shortcuts that survived collision detection so the
+# reminder block at the bottom only mentions usable ones.
+EMITTED_FOLDERS=()
+EMITTED_SHORTS=()
+
 for dir in "$GITHUB_DIR"/*/; do
     [ -d "$dir" ] || continue
 
@@ -63,9 +126,24 @@ for dir in "$GITHUB_DIR"/*/; do
     [[ "$folder_name" == .* ]] && continue
     [[ "$folder_name" == _* ]] && continue
 
-    # Build short alias from initials of hyphenated parts
-    # e.g. command-line-voice -> clv, no-more-time-blindness-android -> nmtba
-    short="$(echo "$folder_name" | sed 's/\([a-zA-Z0-9]\)[a-zA-Z0-9]*/\1/g; s/-//g')"
+    # Suffix: override wins; fall back to the auto-rule.
+    if [ -n "${SUFFIX_OVERRIDES[$folder_name]:-}" ]; then
+        short="${SUFFIX_OVERRIDES[$folder_name]}"
+    else
+        short="$(_default_suffix "$folder_name")"
+    fi
+
+    # Collision check: if another folder already claimed this suffix,
+    # log the conflict and skip this one. Edit the overrides file to
+    # resolve.
+    if [ -n "${SUFFIX_CLAIMED_BY[$short]:-}" ]; then
+        printf 'WARN: suffix %q collision - %s loses to %s (already claimed)\n' \
+            "$short" "$folder_name" "${SUFFIX_CLAIMED_BY[$short]}" >> "$ERROR_LOG"
+        printf '      resolve by adding to %s:\n' "$OVERRIDES_FILE" >> "$ERROR_LOG"
+        printf '        SUFFIX_OVERRIDES[%s]=<unique-suffix>\n' "$folder_name" >> "$ERROR_LOG"
+        continue
+    fi
+    SUFFIX_CLAIMED_BY[$short]="$folder_name"
 
     # Continue aliases
     echo "alias cc-${folder_name}='_cc_tmux \"${short}\" \"${dir}\" claude --continue'" >> "$ALIAS_FILE"
@@ -79,6 +157,8 @@ for dir in "$GITHUB_DIR"/*/; do
         echo "alias cn-${short}='_cc_tmux \"${short}\" \"${dir}\" claude'" >> "$ALIAS_FILE"
         echo "alias dcn-${short}='_cc_tmux \"${short}\" \"${dir}\" claude --dangerously-skip-permissions'" >> "$ALIAS_FILE"
     fi
+    EMITTED_FOLDERS+=("$folder_name")
+    EMITTED_SHORTS+=("$short")
 done
 
 # Generate the reminder message shown at shell startup
@@ -92,12 +172,9 @@ done
     echo "    echo ''"
 } >> "$ALIAS_FILE"
 
-for dir in "$GITHUB_DIR"/*/; do
-    [ -d "$dir" ] || continue
-    folder_name="$(basename "$dir")"
-    [[ "$folder_name" == .* ]] && continue
-    [[ "$folder_name" == _* ]] && continue
-    short="$(echo "$folder_name" | sed 's/\([a-zA-Z0-9]\)[a-zA-Z0-9]*/\1/g; s/-//g')"
+for i in "${!EMITTED_FOLDERS[@]}"; do
+    folder_name="${EMITTED_FOLDERS[$i]}"
+    short="${EMITTED_SHORTS[$i]}"
     echo "    echo '    cc-${short} / cn-${short} / dcc-${short} / dcn-${short}  ->  ${folder_name}'" >> "$ALIAS_FILE"
 done
 
@@ -110,3 +187,14 @@ done
 # date -Iseconds is a GNU extension; the portable POSIX form is below
 # so generate-cc-aliases works on macOS too.
 echo "# Generated $(date -u +"%Y-%m-%dT%H:%M:%SZ")" >> "$ALIAS_FILE"
+
+# Surface collision warnings to the user inline (the log retains them
+# for later reference).
+if [ -s "$ERROR_LOG" ]; then
+    echo ""
+    echo "  cc-aliases: suffix collisions detected (see $ERROR_LOG):"
+    sed 's/^/    /' "$ERROR_LOG"
+    echo ""
+    echo "  Edit $OVERRIDES_FILE to pin custom suffixes for the loser folders."
+    echo ""
+fi
