@@ -104,6 +104,51 @@ _cc_tmux() {
     tmux new-window -t "$session" -n "$win_name" -c "$work_dir" "$cmd"
     tmux attach-session -t "${session}:${win_name}"
 }
+
+# Bare commands - "cc", "dcc", etc. with no suffix - operate on the
+# current directory. From inside any subfolder of a project under your
+# projects dir, walks up to the project root and runs claude there.
+# Outside any tracked project, falls back to $PWD itself.
+#
+# The suffix derivation here is the simple sed initials rule
+# (folder-name -> first-letter-of-each-hyphen-part). It does NOT honor
+# ~/.cc-suffix-overrides because the alias file is sourced into bash
+# 3.2+ shells and `declare -A` would break there. If a folder needs a
+# pinned suffix, use the explicit `cc-<override>` form.
+_cc_bare() {
+    local cmd_args="$1"; shift
+    local projects_dir="$HOME/GitHub"
+    local _sf="${XDG_STATE_HOME:-$HOME/.local/state}/thedoc/state"
+    if [ -f "$_sf" ]; then
+        local _sd
+        _sd=$(sed -n 's/^projects_dir=//p' "$_sf" 2>/dev/null)
+        [ -n "$_sd" ] && projects_dir="$_sd"
+    fi
+    projects_dir="${projects_dir%/}"
+
+    local cur="$PWD" proj_root=""
+    while [ -n "$cur" ] && [ "$cur" != "/" ]; do
+        if [ "$(dirname "$cur")" = "$projects_dir" ]; then
+            proj_root="$cur"
+            break
+        fi
+        cur="$(dirname "$cur")"
+    done
+    [ -z "$proj_root" ] && proj_root="$PWD"
+
+    local folder_name short
+    folder_name="$(basename "$proj_root")"
+    short="$(echo "$folder_name" | sed 's/\([a-zA-Z0-9]\)[a-zA-Z0-9]*/\1/g; s/-//g')"
+
+    _cc_tmux "$short" "$proj_root" $cmd_args
+}
+
+cc()  { _cc_bare "claude --continue"; }
+cn()  { _cc_bare "claude"; }
+cr()  { _cc_bare "claude --resume"; }
+dcc() { _cc_bare "claude --dangerously-skip-permissions --continue"; }
+dcn() { _cc_bare "claude --dangerously-skip-permissions"; }
+dcr() { _cc_bare "claude --dangerously-skip-permissions --resume"; }
 FUNC
 
 # Compute the default suffix for a folder name: initials of hyphenated
