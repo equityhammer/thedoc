@@ -100,9 +100,17 @@ _cc_tmux() {
         return
     fi
 
-    # Outside tmux: create a new window and attach
-    tmux new-window -t "$session" -n "$win_name" -c "$work_dir" "$cmd"
-    tmux attach-session -t "${session}:${win_name}"
+    # Outside tmux: create a new window and attach.
+    # -a inserts after the current window, shifting others as needed.
+    # Without -a, tmux picks active+1 and fails with "index N in use"
+    # when that slot is occupied. Guard the attach so a failed create
+    # doesn't leave the user attached to nothing.
+    if tmux new-window -a -t "$session" -n "$win_name" -c "$work_dir" "$cmd"; then
+        tmux attach-session -t "${session}:${win_name}"
+    else
+        echo "  tmux new-window failed (window '${win_name}' not created)" >&2
+        return 1
+    fi
 }
 
 # Bare commands - "cc", "dcc", etc. with no suffix - operate on the
@@ -196,11 +204,16 @@ for dir in "$GITHUB_DIR"/*/; do
     # New conversation aliases
     echo "alias cn-${folder_name}='_cc_tmux \"${short}\" \"${dir}\" claude'" >> "$ALIAS_FILE"
     echo "alias dcn-${folder_name}='_cc_tmux \"${short}\" \"${dir}\" claude --dangerously-skip-permissions'" >> "$ALIAS_FILE"
+    # Resume aliases (session picker)
+    echo "alias cr-${folder_name}='_cc_tmux \"${short}\" \"${dir}\" claude --resume'" >> "$ALIAS_FILE"
+    echo "alias dcr-${folder_name}='_cc_tmux \"${short}\" \"${dir}\" claude --dangerously-skip-permissions --resume'" >> "$ALIAS_FILE"
     if [ "$short" != "$folder_name" ]; then
         echo "alias cc-${short}='_cc_tmux \"${short}\" \"${dir}\" claude --continue'" >> "$ALIAS_FILE"
         echo "alias dcc-${short}='_cc_tmux \"${short}\" \"${dir}\" claude --dangerously-skip-permissions --continue'" >> "$ALIAS_FILE"
         echo "alias cn-${short}='_cc_tmux \"${short}\" \"${dir}\" claude'" >> "$ALIAS_FILE"
         echo "alias dcn-${short}='_cc_tmux \"${short}\" \"${dir}\" claude --dangerously-skip-permissions'" >> "$ALIAS_FILE"
+        echo "alias cr-${short}='_cc_tmux \"${short}\" \"${dir}\" claude --resume'" >> "$ALIAS_FILE"
+        echo "alias dcr-${short}='_cc_tmux \"${short}\" \"${dir}\" claude --dangerously-skip-permissions --resume'" >> "$ALIAS_FILE"
     fi
     EMITTED_FOLDERS+=("$folder_name")
     EMITTED_SHORTS+=("$short")
@@ -212,15 +225,15 @@ done
     echo "function _cc_project_reminder() {"
     echo "    echo ''"
     echo "    echo '  Claude Code project shortcuts (tmux session: claude):'"
-    echo "    echo '    cc-*  = continue last conversation    cn-*  = new conversation'"
-    echo "    echo '    dcc-* = continue (skip permissions)   dcn-* = new (skip permissions)'"
+    echo "    echo '    cc-*  = continue last conversation    cn-*  = new conversation    cr-*  = resume (picker)'"
+    echo "    echo '    dcc-* = continue (skip permissions)   dcn-* = new (skip permissions)   dcr-* = resume (skip permissions)'"
     echo "    echo ''"
 } >> "$ALIAS_FILE"
 
 for i in "${!EMITTED_FOLDERS[@]}"; do
     folder_name="${EMITTED_FOLDERS[$i]}"
     short="${EMITTED_SHORTS[$i]}"
-    echo "    echo '    cc-${short} / cn-${short} / dcc-${short} / dcn-${short}  ->  ${folder_name}'" >> "$ALIAS_FILE"
+    echo "    echo '    cc-${short} / cn-${short} / cr-${short} / dcc-${short} / dcn-${short} / dcr-${short}  ->  ${folder_name}'" >> "$ALIAS_FILE"
 done
 
 {
