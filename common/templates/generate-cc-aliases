@@ -219,21 +219,30 @@ for dir in "$GITHUB_DIR"/*/; do
     EMITTED_SHORTS+=("$short")
 done
 
-# Generate the reminder message shown at shell startup
+# Generate the reminder message shown at shell startup.
+# Compact two-column table - one row per project. The prefix legend at
+# the top makes the iteration of cc-/cn-/cr-/dcc-/dcn-/dcr- variants
+# implicit so we don't repeat them on every line.
 {
     echo ""
     echo "function _cc_project_reminder() {"
     echo "    echo ''"
     echo "    echo '  Claude Code project shortcuts (tmux session: claude):'"
-    echo "    echo '    cc-*  = continue last conversation    cn-*  = new conversation    cr-*  = resume (picker)'"
-    echo "    echo '    dcc-* = continue (skip permissions)   dcn-* = new (skip permissions)   dcr-* = resume (skip permissions)'"
     echo "    echo ''"
+    echo "    echo '    Prefix:  cc-* continue   cn-* new   cr-* resume (picker)'"
+    echo "    echo '             dcc-/dcn-/dcr- = same three with --dangerously-skip-permissions'"
+    echo "    echo '    Bare:    cc, cn, cr, dcc, dcn, dcr  operate on the current folder'"
+    echo "    echo ''"
+    echo "    printf '    %-10s %s\\n' SUFFIX PROJECT"
+    echo "    printf '    %-10s %s\\n' ------ -------"
 } >> "$ALIAS_FILE"
 
 for i in "${!EMITTED_FOLDERS[@]}"; do
     folder_name="${EMITTED_FOLDERS[$i]}"
     short="${EMITTED_SHORTS[$i]}"
-    echo "    echo '    cc-${short} / cn-${short} / cr-${short} / dcc-${short} / dcn-${short} / dcr-${short}  ->  ${folder_name}'" >> "$ALIAS_FILE"
+    # %-10s pads SUFFIX to 10 chars; long-name projects (e.g.
+    # no-more-time-blindness-android) get a wider gap, short ones stay tight.
+    printf "    printf '    %%-10s %%s\\\\n' %q %q\n" "$short" "$folder_name" >> "$ALIAS_FILE"
 done
 
 {
