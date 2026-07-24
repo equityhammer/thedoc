@@ -15,7 +15,8 @@ Before doing anything else, read CLAUDE.md in this directory. It contains:
 
 The framework path points to the thedoc repo (e.g. `~/thedoc` or `~/GitHub/thedoc`). Inside it:
 - `common/templates/tmux.conf` - battle-tested tmux config for Windows/WSL2 (OSC 52 clipboard, cheat sheet status bar, drag-to-copy, right-click paste, double/triple-click)
-- `common/templates/generate-cc-aliases` - alias generator for project shortcuts
+- `common/templates/generate-cc-aliases` - alias generator for project shortcuts (window level, inside one `claude` session)
+- `common/templates/tmux-session-shortcuts.sh` - `t<name>` jump-to-session shortcuts (session level)
 - `common/templates/ssh-config-examples` - SSH shortcut patterns
 - `llm-secrets` - secure secret storage tool
 
@@ -110,35 +111,50 @@ Read the Framework path from CLAUDE.md first. Templates live at `<framework>/com
   entries that pin custom abbreviations. Offer to draft the overrides
   file with the colliding folders pre-populated, then re-run.
 
-### 3. SSH Shortcuts
+### 3. tmux Session Shortcuts
+- Check: does `~/.tmux-session-shortcuts.sh` exist? Is it sourced from `.bashrc`/`.zshrc`/`.bash_aliases`?
+- If not: offer to install `<framework>/common/templates/tmux-session-shortcuts.sh` to `~/.tmux-session-shortcuts.sh` and add the sourcing line
+- Explain what it does: `t` lists sessions, `t <name>` or `t<name>` attaches
+  to a session by case-insensitive prefix (`tsunday` reaches
+  `sundaySchoolEscapeRoom`), creating it if absent. No per-session alias
+  needed - it hooks the shell's unknown-command handler and chains to
+  whatever handler was already there.
+- This is the session-level companion to item 2, which works at the window
+  level inside one `claude` session. Installing both is the intended setup.
+- Flag the tradeoff: a typo starting with `t` creates a session rather than
+  erroring. See `updates/002-tmux-session-shortcuts.md` for the opt-out.
+- Good moment to review session names - short and distinct makes better
+  shortcuts. `tmux rename-session -t <old> <new>` is safe on a live session.
+
+### 4. SSH Shortcuts
 - Check: does `~/.ssh/config` exist? What Host entries are there?
 - Show the user their current SSH config (if any)
 - Ask if they have machines they frequently SSH into
 - Reference `<framework>/common/templates/ssh-config-examples` for patterns
 - Help them add Host entries for any machines they mention
 
-### 4. Shell Profile
+### 5. Shell Profile
 - Check `.bashrc` or `.zshrc` for: PATH setup, alias sourcing, secrets sourcing
 - Make sure `~/.secrets` is sourced (for llm-secrets)
 - Make sure project aliases are sourced
 - Check for duplicate entries or conflicts
 
-### 5. llm-secrets
+### 6. llm-secrets
 - Check: is `llm-secrets` in PATH?
 - If not: show them how to use it from the framework (`<framework>/llm-secrets`)
 - Explain what it does: securely stores env vars in `~/.secrets` so AI tools can use them without seeing values
 - Offer to set up the `.bashrc` sourcing line
 
-### 6. Claude Code Settings
+### 7. Claude Code Settings
 - Read `~/.claude/settings.json` and `~/.claude/settings.local.json`
 - Check for common issues (overly broad permissions, missing tool allows)
 - Check for project-level settings conflicts
 
-### 7. Claude Code Commands/Skills
+### 8. Claude Code Commands/Skills
 - Check `~/.claude/commands/` for existing commands
 - Offer to set up useful commands like `/refreshAliases` and `/newProject` from `<framework>/common/skills/`
 
-### 8. CLAUDE.md Files (Layered)
+### 9. CLAUDE.md Files (Layered)
 
 Claude Code stacks CLAUDE.md files cumulatively: home dir → projects root → project folder. Duplicated sections and competing "primary role" claims across layers muddle the model's context.
 
@@ -168,16 +184,16 @@ When auditing:
 
 Explain the inheritance model to the user if they haven't seen it before. This convention also applies to instance folders thedoc generates - the template in `setup.sh` produces a minimal CLAUDE.md that slots into this layering cleanly.
 
-### 9. Git Identity
+### 10. Git Identity
 - Check `git config user.name` and `git config user.email` (global and local)
 - If not set, help them configure it
 
-### 10. Secrets & Git Push
+### 11. Secrets & Git Push
 - Ask if they need to push to GitHub from this machine
 - If yes, help them set up a fine-grained PAT using `llm-secrets`
 - Explain the remote URL approach for per-repo auth
 
-### 11. Status Line
+### 12. Status Line
 
 Claude Code has a built-in status bar at the bottom of the terminal. The `statusLine` setting in `~/.claude/settings.json` lets you replace it with any shell script. The framework ships a portable script at `<framework>/common/templates/statusline.sh`.
 
@@ -207,7 +223,7 @@ Present the audit as a numbered list of findings/recommendations. Let the user a
 
 When the user chose "Quick" setup mode, do a fast scan and report a summary:
 1. Read CLAUDE.md for system info and framework path
-2. Check the 10 items above. For install-type items (tmux, aliases, SSH, shell profile, llm-secrets, settings, commands, git, secrets) report `installed` / `not installed` / `needs attention`. For check-type items (CLAUDE.md hygiene, item 8) report `healthy` / `needs refactor` / `not present`, and briefly state what was found (e.g. "2 layers, 1 competing role claim").
+2. Check the items above. For install-type items (tmux, aliases, session shortcuts, SSH, shell profile, llm-secrets, settings, commands, git, secrets) report `installed` / `not installed` / `needs attention`. For check-type items (CLAUDE.md hygiene, item 9) report `healthy` / `needs refactor` / `not present`, and briefly state what was found (e.g. "2 layers, 1 competing role claim").
 3. Present a summary table
 4. Ask what they want to configure first
 
@@ -221,6 +237,7 @@ The framework includes these templates at `<framework>/common/templates/`:
 |----------|-------------|
 | `tmux.conf` | Windows/WSL2-friendly tmux config with OSC 52 clipboard, status bar cheat sheet, drag-to-copy, right-click paste |
 | `generate-cc-aliases` | Auto-generates cc-*/cn-*/dcc-*/dcn-* project shortcuts for tmux windows |
+| `tmux-session-shortcuts.sh` | `t`, `t <name>`, `t<name>` shortcuts to jump to (or create) whole tmux sessions by prefix |
 | `ssh-config-examples` | SSH Host entry patterns for quick access to machines |
 
 And these tools at `<framework>/`:
