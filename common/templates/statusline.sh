@@ -98,3 +98,21 @@ if [ ${#parts2[@]} -gt 0 ]; then
     done
     echo "$line2"
 fi
+
+# Line 3: Tailscale link for THIS project (per-folder), falling back to a global default.
+# Search order: walk up from the session's cwd looking for a `.tailscale-link.txt`
+# in the project (or any parent up to, but not including, $HOME). If none is found,
+# use the global pointer file at ~/.claude/tailscale-link.txt.
+LINK=""
+d="$DIR"
+while [ -n "$d" ] && [ "$d" != "/" ] && [ "$d" != "$HOME" ]; do
+    if [ -f "$d/.tailscale-link.txt" ]; then
+        LINK=$(head -1 "$d/.tailscale-link.txt" 2>/dev/null || true)
+        break
+    fi
+    d="${d%/*}"
+done
+if [ -z "$LINK" ] && [ -f "$HOME/.claude/tailscale-link.txt" ]; then
+    LINK=$(head -1 "$HOME/.claude/tailscale-link.txt" 2>/dev/null || true)
+fi
+[ -n "$LINK" ] && printf '\xF0\x9F\x94\x97 %s\n' "$LINK"
