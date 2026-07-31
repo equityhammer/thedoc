@@ -6,7 +6,7 @@ Apps that surface a list of *other* installed apps (launchers, transfer tools, a
 
 ### Read labels + icons from `PackageManager`, not bundled JSON
 
-A bundled JSON catalog of "popular Android apps" almost certainly carries an empty `name` field for half its entries — original sources don't always populate display names. Rendering `entry.name.ifEmpty { entry.packageName }` then produces rows like "com.whatsapp" and "com.teslacoilsw.launcher" in the UI. The fix: at render time, consult the device's own `PackageManager`:
+A bundled JSON catalog of "popular Android apps" almost certainly carries an empty `name` field for half its entries; original sources don't always populate display names. Rendering `entry.name.ifEmpty { entry.packageName }` then produces rows like "com.whatsapp" and "com.teslacoilsw.launcher" in the UI. The fix: at render time, consult the device's own `PackageManager`:
 
 ```kotlin
 fun PackageManager.appLabelFor(pkg: String, fallback: String = ""): String =
@@ -21,7 +21,7 @@ fun PackageManager.appIconFor(pkg: String): Drawable? =
     catch (_: PackageManager.NameNotFoundException) { null }
 ```
 
-Define a fallback ladder: system label → bundled name → package id → `(unknown)`. The system label is always the best available identity — it's the same string the user sees in their launcher.
+Define a fallback ladder: system label → bundled name → package id → `(unknown)`. The system label is always the best available identity: it's the same string the user sees in their launcher.
 
 ### Memoize PackageManager calls
 
@@ -37,7 +37,7 @@ class AppIconCache<T>(private val loader: (String) -> T?) {
 }
 ```
 
-Two key invariants: (a) **cache `null` too** — for uninstalled packages there's no answer, and you don't want to keep retrying every render; (b) **one cache instance per consumer surface** — a Compose `LocalAppIconCache` for in-app rows, a separate cache field on the overlay `Service` for the overlay surface. Different lifetimes, different invalidation semantics.
+Two key invariants: (a) **cache `null` too**: for uninstalled packages there's no answer, and you don't want to keep retrying every render; (b) **one cache instance per consumer surface**: a Compose `LocalAppIconCache` for in-app rows, a separate cache field on the overlay `Service` for the overlay surface. Different lifetimes, different invalidation semantics.
 
 ### Foreground services with periodic tickers MUST go through the cache too
 

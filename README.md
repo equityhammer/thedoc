@@ -1,6 +1,6 @@
 # thedoc
 
-[![smoke-test](https://github.com/iamfoehammer/thedoc/actions/workflows/test.yml/badge.svg)](https://github.com/iamfoehammer/thedoc/actions/workflows/test.yml)
+[![smoke-test](https://github.com/equityhammer/thedoc/actions/workflows/test.yml/badge.svg)](https://github.com/equityhammer/thedoc/actions/workflows/test.yml)
 
 **Emergency Medical Hologram for your LLM/CLI harnesses.**
 
@@ -26,13 +26,13 @@ One command. It asks where your projects live, clones thedoc there, sets up your
 **Linux / macOS / WSL2 / Git Bash**
 
 ```bash
-bash <(curl -fsSL https://raw.githubusercontent.com/iamfoehammer/thedoc/main/bootstrap.sh)
+bash <(curl -fsSL https://raw.githubusercontent.com/equityhammer/thedoc/main/bootstrap.sh)
 ```
 
 **Windows (PowerShell 7)**
 
 ```powershell
-irm https://raw.githubusercontent.com/iamfoehammer/thedoc/main/bootstrap.ps1 | iex
+irm https://raw.githubusercontent.com/equityhammer/thedoc/main/bootstrap.ps1 | iex
 ```
 
 > The PowerShell port is new. If something goes sideways, fall back to
@@ -41,7 +41,7 @@ irm https://raw.githubusercontent.com/iamfoehammer/thedoc/main/bootstrap.ps1 | i
 **Manual install** (if you prefer not to pipe to bash):
 
 ```bash
-git clone https://github.com/iamfoehammer/thedoc.git ~/GitHub/thedoc
+git clone https://github.com/equityhammer/thedoc.git ~/GitHub/thedoc
 echo 'export PATH="$HOME/GitHub/thedoc:$PATH"' >> ~/.bashrc
 echo '[ -f "$HOME/.secrets" ] && source "$HOME/.secrets"' >> ~/.bashrc
 source ~/.bashrc
@@ -51,7 +51,7 @@ thedoc
 **Manual install (PowerShell)**:
 
 ```powershell
-git clone https://github.com/iamfoehammer/thedoc.git $HOME\GitHub\thedoc
+git clone https://github.com/equityhammer/thedoc.git $HOME\GitHub\thedoc
 # Add to PATH for current session
 $env:PATH = "$HOME\GitHub\thedoc;$env:PATH"
 # Persist across sessions:
@@ -209,7 +209,7 @@ If you only want `llm-secrets`, no doctor framework needed:
 
 ```bash
 mkdir -p ~/.local/bin
-curl -o ~/.local/bin/llm-secrets https://raw.githubusercontent.com/iamfoehammer/thedoc/main/llm-secrets
+curl -o ~/.local/bin/llm-secrets https://raw.githubusercontent.com/equityhammer/thedoc/main/llm-secrets
 chmod +x ~/.local/bin/llm-secrets
 echo '[ -f "$HOME/.secrets" ] && source "$HOME/.secrets"' >> ~/.bashrc
 source ~/.bashrc
@@ -219,7 +219,7 @@ source ~/.bashrc
 
 ```powershell
 # Download
-Invoke-WebRequest -Uri "https://raw.githubusercontent.com/iamfoehammer/thedoc/main/llm-secrets.ps1" -OutFile "$HOME\llm-secrets.ps1"
+Invoke-WebRequest -Uri "https://raw.githubusercontent.com/equityhammer/thedoc/main/llm-secrets.ps1" -OutFile "$HOME\llm-secrets.ps1"
 
 # Add to your profile (run: notepad $PROFILE)
 if (Test-Path "$HOME\.secrets.ps1") { try { . "$HOME\.secrets.ps1" } catch { Write-Host "~/.secrets.ps1: $($_.Exception.Message)" -ForegroundColor Yellow } }

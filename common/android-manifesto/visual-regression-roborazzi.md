@@ -107,11 +107,11 @@ class XmlLayoutSnapshotTest {
 }
 ```
 
-Compose's `createComposeRule()` handles the Activity attachment internally — only the XML / `LayoutInflater.inflate` path needs the manual setup.
+Compose's `createComposeRule()` handles the Activity attachment internally; only the XML / `LayoutInflater.inflate` path needs the manual setup.
 
 **2. `captureRoboImage()` on a Compose root captures only the visible viewport.** For a `LazyColumn` or vertical-scroll container, content below the fold isn't composed → doesn't appear in the PNG. Three workable strategies, ranked by usefulness for visual regression baselines:
 
-- **Subtree captures via `Modifier.testTag(...)`** — best for regression baselines. Add a tag to each major section in your screen + capture each independently:
+- **Subtree captures via `Modifier.testTag(...)`**: best for regression baselines. Add a tag to each major section in your screen + capture each independently:
   ```kotlin
   // In MyScreen Composable:
   Box(modifier = Modifier.testTag("hero")) { HeroSection() }
@@ -119,14 +119,14 @@ Compose's `createComposeRule()` handles the Activity attachment internally — o
   // In the test:
   composeTestRule.onNodeWithTag("manual-queue").captureRoboImage()
   ```
-  Smaller PNGs, actionable diffs (`"manual-queue regressed"` not `"the screen changed by 0.0001%"`). Also surfaces latent issues — wrapping a 4-button Row at narrow widths, drifting icon alignment in 3-line columns, etc. — that get lost in the noise of a full-screen capture.
+  Smaller PNGs, actionable diffs (`"manual-queue regressed"` not `"the screen changed by 0.0001%"`). Also surfaces latent issues (wrapping a 4-button Row at narrow widths, drifting icon alignment in 3-line columns, etc.) that get lost in the noise of a full-screen capture.
 
-- **Taller test qualifier** — simplest for first baseline. `@Config(qualifiers = "w412dp-h2400dp-xxhdpi")` makes the LazyColumn compose every section in one viewport. Tradeoff: relative proportions don't match a real device, but pixel-diff regression detection doesn't care about proportions.
+- **Taller test qualifier**: simplest for first baseline. `@Config(qualifiers = "w412dp-h2400dp-xxhdpi")` makes the LazyColumn compose every section in one viewport. Tradeoff: relative proportions don't match a real device, but pixel-diff regression detection doesn't care about proportions.
 
-- **Per-scroll-position capture** — most accurate to real usage, most code: render, capture, programmatically scroll, capture again. Useful for catching scroll-position-specific layout bugs.
+- **Per-scroll-position capture** is the most accurate to real usage and the most code: render, capture, programmatically scroll, capture again. Useful for catching scroll-position-specific layout bugs.
 
 ```kotlin
-// ANTI-PATTERN — captures only what fits in the test qualifier's viewport
+// ANTI-PATTERN: captures only what fits in the test qualifier's viewport
 composeTestRule.setContent { MyScrollableScreen() }
 composeTestRule.onRoot().captureRoboImage()   // only top sections appear in PNG
 ```
@@ -136,7 +136,7 @@ composeTestRule.onRoot().captureRoboImage()   // only top sections appear in PNG
 **Fix (2-step):**
 
 ```kotlin
-// app/build.gradle.kts — pin outputDir to a source-controlled location.
+// app/build.gradle.kts: pin outputDir to a source-controlled location.
 roborazzi {
     outputDir.set(file("src/test/snapshots/roborazzi"))
 }
@@ -158,7 +158,7 @@ tasks.whenTaskAdded {
 ```
 
 ```bash
-# dist/record_snapshots.sh — one-command record wrapper. Discoverable + no
+# dist/record_snapshots.sh: one-command record wrapper. Discoverable + no
 # Gradle-flag memorization required.
 ./gradlew :app:recordRoborazziDebug
 # After: list newly-written PNGs + print the dist server URL for browser review.
@@ -167,7 +167,7 @@ tasks.whenTaskAdded {
 **4. Material 3 AlertDialog body containing OutlinedTextField hangs `setContent` itself with 193K+ idle attempts.** Cause: AlertDialog creates a separate Dialog window whose composition root `RobolectricIdlingStrategy` doesn't track; the TextField's cursor + IME animations keep the dialog window recomposing but the test's idling tracker never sees idle. `mainClock.autoAdvance = false` doesn't help because the hang is INSIDE `setContent`, before the test can drive the clock.
 
 ```kotlin
-// WRONG — hangs at setContent with AppNotIdleException after 60s.
+// WRONG: hangs at setContent with AppNotIdleException after 60s.
 @Composable
 private fun MyHarness() {
     AlertDialog(
@@ -179,7 +179,7 @@ private fun MyHarness() {
     )
 }
 
-// RIGHT — inline the dialog body as a non-Dialog Column.
+// RIGHT: inline the dialog body as a non-Dialog Column.
 @Composable
 private fun MyHarness() {
     Scaffold(snackbarHost = { SnackbarHost(snackbarHostState) }) { _ ->
@@ -199,16 +199,16 @@ Trade-off: lose AlertDialog modal behavior coverage (scrim, tap-outside dismiss,
 
 **5. Two Compose UI Test interaction gotchas.**
 
-**5a. Sibling Composables in a Scaffold body lambda render at (0,0) and overlap.** Multiple sibling Composables WITHOUT a Layout-providing parent (`Column` / `Row` / stacked `Box`) overlap. `performClick` on the covered sibling is ambiguous in Compose UI Test — the click may dispatch to the topmost sibling instead. Symptom: tests that interact with the FIRST-declared Composable fail with "expected:<[X]> but was:<[]>" while tests interacting with the LAST-declared Composable pass.
+**5a. Sibling Composables in a Scaffold body lambda render at (0,0) and overlap.** Multiple sibling Composables WITHOUT a Layout-providing parent (`Column` / `Row` / stacked `Box`) overlap. `performClick` on the covered sibling is ambiguous in Compose UI Test: the click may dispatch to the topmost sibling instead. Symptom: tests that interact with the FIRST-declared Composable fail with "expected:<[X]> but was:<[]>" while tests interacting with the LAST-declared Composable pass.
 
 ```kotlin
-// WRONG — Add and Ignore overlap.
+// WRONG: Add and Ignore overlap.
 Scaffold(snackbarHost = { SnackbarHost(snackbarHostState) }) { _ ->
     Button(onClick = { /* add */ }) { Text("Add") }
     Button(onClick = { /* ignore */ }) { Text("Ignore") }
 }
 
-// RIGHT — Column gives each Button unique bounds.
+// RIGHT: Column gives each Button unique bounds.
 Scaffold(snackbarHost = { SnackbarHost(snackbarHostState) }) { _ ->
     Column {
         Button(onClick = { /* add */ }) { Text("Add") }
@@ -217,7 +217,7 @@ Scaffold(snackbarHost = { SnackbarHost(snackbarHostState) }) { _ ->
 }
 ```
 
-**5b. Snackbar's dismiss X uses `contentDescription = "Dismiss"`, NOT displayed text.** When `withDismissAction = true` renders the X icon, finding it via `onNodeWithText("Dismiss")` returns NO match and `.performClick()` throws `AssertionError: Failed to inject touch input`. Use `onNodeWithContentDescription("Dismiss").performClick()` instead. The displayed "Undo" actionLabel button DOES use Text — `onNodeWithText("Undo")` works for that. General rule for Compose UI Test node-finder choice:
+**5b. Snackbar's dismiss X uses `contentDescription = "Dismiss"`, NOT displayed text.** When `withDismissAction = true` renders the X icon, finding it via `onNodeWithText("Dismiss")` returns NO match and `.performClick()` throws `AssertionError: Failed to inject touch input`. Use `onNodeWithContentDescription("Dismiss").performClick()` instead. The displayed "Undo" actionLabel button DOES use Text; `onNodeWithText("Undo")` works for that. General rule for Compose UI Test node-finder choice:
 
 - Plain Text Composables, Button labels, OutlinedTextField placeholders → `onNodeWithText`
 - IconButton tap targets, Image semantics, anything with `contentDescription = "..."` → `onNodeWithContentDescription`
@@ -228,23 +228,23 @@ Scaffold(snackbarHost = { SnackbarHost(snackbarHostState) }) { _ ->
 | Device class | Qualifier | Notes |
 |---|---|---|
 | Pixel 7 portrait (reference phone) | `w412dp-h915dp-xxhdpi` | Default "normal phone" baseline |
-| Z Fold 5 cover (folded) | `w360dp-h850dp-xxhdpi` | Narrowest realistic Android viewport |
-| Z Fold 5 inner (unfolded) | `w673dp-h841dp-xxhdpi` | Foldable inner display |
+| Foldable cover (folded) | `w360dp-h850dp-xxhdpi` | Narrowest realistic Android viewport |
+| Foldable inner (unfolded) | `w673dp-h841dp-xxhdpi` | Foldable inner display |
 | Pixel C / 10" tablet | `w800dp-h1280dp-xhdpi` | Large-tablet sanity baseline |
-| Full-content sentinel | `w412dp-h2400dp-xxhdpi` | Tall-viewport version of phone width — forces full LazyColumn to compose for regression baselines |
+| Full-content sentinel | `w412dp-h2400dp-xxhdpi` | Tall-viewport version of phone width, forces full LazyColumn to compose for regression baselines |
 
-**Rule of thumb:** pin one "narrow" qualifier (Z Fold 5 cover or smaller) and one "reference" qualifier (Pixel 7 portrait) per significant Composable. Add the full-content sentinel ONLY for screens with substantial LazyColumn content.
+**Rule of thumb:** pin one "narrow" qualifier (a foldable cover display or smaller) and one "reference" qualifier (Pixel 7 portrait) per significant Composable. Add the full-content sentinel ONLY for screens with substantial LazyColumn content.
 
 ### Visual regression as a tool for SURFACING latent issues
 
-The most underappreciated value of snapshot testing isn't catching FUTURE regressions — it's surfacing EXISTING layout bugs that whole-screen review misses. On first baseline capture of `TransferChecklistScreen` at Pixel 7 width, the `subtree_app_list_section.png` immediately showed a 4-button Row in CompletionBanner wrapping "Share as CSV" vertically (1 char per line) at 412dp. The bug had existed since UX-25 + UX-26 + UX-29 + EXPORT-08 each added a button to the Row without testing the combined width. Roborazzi caught it on the first run, before any user reported it.
+The most underappreciated value of snapshot testing isn't catching FUTURE regressions: it's surfacing EXISTING layout bugs that whole-screen review misses. On first baseline capture of `TransferChecklistScreen` at Pixel 7 width, the `subtree_app_list_section.png` immediately showed a 4-button Row in CompletionBanner wrapping "Share as CSV" vertically (1 char per line) at 412dp. The bug had existed since UX-25 + UX-26 + UX-29 + EXPORT-08 each added a button to the Row without testing the combined width. Roborazzi caught it on the first run, before any user reported it.
 
-**Implication:** when you add a Compose UI section that takes user inputs (button rows, chip rows, multi-action surfaces), write the subtree snapshot test in the same PR — you'll catch combined-width issues you wouldn't have thought to check manually.
+**Implication:** when you add a Compose UI section that takes user inputs (button rows, chip rows, multi-action surfaces), write the subtree snapshot test in the same PR; you'll catch combined-width issues you wouldn't have thought to check manually.
 
 Originating changes:
-- `v1.0.91` Sprint 29 TEST-COV-10 — initial Roborazzi infra installed via a `/loop` cron from the user ("until roborrozi is instslled snd woeking"); pinned the BUBBLE-06 fix at Z Fold 5 cover qualifier before sideload (visually verified the fix at the EXACT device dimensions the user reported the bug on, BEFORE re-shipping the APK).
-- `v1.0.92` Sprint 30 TEST-COV-11 — full-content home-screen baselines using the tall-viewport strategy.
-- Sprint 31 TEST-COV-12 — 8 `Modifier.testTag` wraps in `TransferChecklistScreen.kt` + 7 per-section snapshot tests for actionable diffs; surfaced the CompletionBanner 4-button-Row overflow as a latent bug on first run.
+- `v1.0.91` Sprint 29 TEST-COV-10: initial Roborazzi infra installed via a `/loop` cron from the user; pinned the BUBBLE-06 fix at the foldable cover qualifier before sideload (visually verified the fix at the EXACT device dimensions the user reported the bug on, BEFORE re-shipping the APK).
+- `v1.0.92` Sprint 30 TEST-COV-11: full-content home-screen baselines using the tall-viewport strategy.
+- Sprint 31 TEST-COV-12: 8 `Modifier.testTag` wraps in `TransferChecklistScreen.kt` + 7 per-section snapshot tests for actionable diffs; surfaced the CompletionBanner 4-button-Row overflow as a latent bug on first run.
 - Two memories crystallised in the process: `feedback-roborazzi-captureRoboImage-needs-activity` (View-needs-Activity gotcha) + `feedback-roborazzi-captures-visible-viewport-only` (visible-viewport-only gotcha + the 3 capture strategies).
 
 ---

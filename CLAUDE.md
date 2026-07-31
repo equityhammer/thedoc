@@ -18,7 +18,7 @@ from anywhere in their shell (once the framework is on PATH - the installer sets
 
 ## If you're here to work on the framework itself
 
-If the user genuinely wants to contribute to the public thedoc framework (fix a bug in `setup.sh`, improve a `DOCTOR.md` template, add a new doctor type), confirm that's the intent before proceeding. The repo lives at https://github.com/iamfoehammer/thedoc.
+If the user genuinely wants to contribute to the public thedoc framework (fix a bug in `setup.sh`, improve a `DOCTOR.md` template, add a new doctor type), confirm that's the intent before proceeding. The repo lives at https://github.com/equityhammer/thedoc.
 
 ## Maintainer context
 

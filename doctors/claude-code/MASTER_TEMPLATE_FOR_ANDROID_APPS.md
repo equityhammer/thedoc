@@ -8,5 +8,5 @@ It now lives in `thedoc/common/android-manifesto/` (shared by Claude Code and
 Jarvis) and is symlinked at `~/GitHub/android-manifesto` (alias `cc-android-manifesto`).
 
 The content was reorganized into topic files (build, sprint loop, crash/telemetry,
-compose, overlay, persistence, testing, etc.) — start at the index above. No
+compose, overlay, persistence, testing, etc.), start at the index above. No
 conventions were changed in the move.

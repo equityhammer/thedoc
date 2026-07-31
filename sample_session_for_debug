@@ -5,8 +5,8 @@ PowerShell 7.5.5
      https://aka.ms/PowerShell-Release?tag=v7.6.0
 
 Custom commands: cgithub, pin, wslToMyClipboard, cc, cc-<project>
-PS C:\Users\wmchr> # Clone to any location - setup will detect your projects folder
-PS C:\Users\wmchr> git clone https://github.com/iamfoehammer/thedoc.git ~/thedoc
+PS C:\Users\exampleuser> # Clone to any location - setup will detect your projects folder
+PS C:\Users\exampleuser> git clone https://github.com/equityhammer/thedoc.git ~/thedoc
 Cloning into '~/thedoc'...
 remote: Enumerating objects: 62, done.
 remote: Counting objects: 100% (62/62), done.
@@ -14,15 +14,15 @@ remote: Compressing objects: 100% (42/42), done.
 remote: Total 62 (delta 18), reused 54 (delta 13), pack-reused 0 (from 0)
 Receiving objects: 100% (62/62), 31.53 KiB | 2.87 MiB/s, done.
 Resolving deltas: 100% (18/18), done.
-PS C:\Users\wmchr> echo 'export PATH="$HOME/thedoc:$PATH"' >> ~/.bashrc
-PS C:\Users\wmchr> echo '[ -f "$HOME/.secrets" ] && source "$HOME/.secrets"' >> ~/.bashrc
-PS C:\Users\wmchr> source ~/.bashrc
+PS C:\Users\exampleuser> echo 'export PATH="$HOME/thedoc:$PATH"' >> ~/.bashrc
+PS C:\Users\exampleuser> echo '[ -f "$HOME/.secrets" ] && source "$HOME/.secrets"' >> ~/.bashrc
+PS C:\Users\exampleuser> source ~/.bashrc
 source: The term 'source' is not recognized as a name of a cmdlet, function, script file, or executable program.
 Check the spelling of the name, or if a path was included, verify that the path is correct and try again.
-PS C:\Users\wmchr> thedoc
+PS C:\Users\exampleuser> thedoc
 thedoc: The term 'thedoc' is not recognized as a name of a cmdlet, function, script file, or executable program.
 Check the spelling of the name, or if a path was included, verify that the path is correct and try again.
-PS C:\Users\wmchr> wsl
+PS C:\Users\exampleuser> wsl
 Welcome to Ubuntu 22.04.3 LTS (GNU/Linux 6.6.87.2-microsoft-standard-WSL2 x86_64)
 
  * Documentation:  https://help.ubuntu.com
@@ -35,14 +35,14 @@ Welcome to Ubuntu 22.04.3 LTS (GNU/Linux 6.6.87.2-microsoft-standard-WSL2 x86_64
    https://ubuntu.com/engage/secure-kubernetes-at-the-edge
 
 This message is shown once a day. To disable it please create the
-/home/englamdring/.hushlogin file.
-englamdring@Will-EH:/mnt/c/Users/wmchr$ # Clone to any location - setup will detect your projects folder
-git clone https://github.com/iamfoehammer/thedoc.git ~/thedoc
+/home/exampleuser/.hushlogin file.
+exampleuser@example-host:/mnt/c/Users/exampleuser$ # Clone to any location - setup will detect your projects folder
+git clone https://github.com/equityhammer/thedoc.git ~/thedoc
 echo 'export PATH="$HOME/thedoc:$PATH"' >> ~/.bashrc
 echo '[ -f "$HOME/.secrets" ] && source "$HOME/.secrets"' >> ~/.bashrc
 source ~/.bashrc
 thedoc
-Cloning into '/home/englamdring/thedoc'...
+Cloning into '/home/exampleuser/thedoc'...
 remote: Enumerating objects: 62, done.
 remote: Counting objects: 100% (62/62), done.
 remote: Compressing objects: 100% (42/42), done.
@@ -85,13 +85,13 @@ Resolving deltas: 100% (18/18), done.
   > ls
   Pick a number between 1 and 1.
   > ^C
-englamdring@Will-EH:/mnt/c/Users/wmchr$ # Clone to any location - setup will detect your projects folder
-git clone https://github.com/iamfoehammer/thedoc.git ~/thedoc
+exampleuser@example-host:/mnt/c/Users/exampleuser$ # Clone to any location - setup will detect your projects folder
+git clone https://github.com/equityhammer/thedoc.git ~/thedoc
 echo 'export PATH="$HOME/thedoc:$PATH"' >> ~/.bashrc
 echo '[ -f "$HOME/.secrets" ] && source "$HOME/.secrets"' >> ~/.bashrc
 source ~/.bashrc
 thedoc
-fatal: destination path '/home/englamdring/thedoc' already exists and is not an empty directory.
+fatal: destination path '/home/exampleuser/thedoc' already exists and is not an empty directory.
 
   ╔════════════════════════════════════╗
   ║  Emergency CLI Hologram activated  ║
@@ -128,7 +128,7 @@ fatal: destination path '/home/englamdring/thedoc' already exists and is not an 
   >
   Pick a number between 1 and 1.
   > ^C
-englamdring@Will-EH:/mnt/c/Users/wmchr$ ls
+exampleuser@example-host:/mnt/c/Users/exampleuser$ ls
  -1.14-windows.xml
 '3D Objects'
  AndroidStudioProjects
@@ -187,12 +187,12 @@ englamdring@Will-EH:/mnt/c/Users/wmchr$ ls
  svg.svg
  svg.txt
 '~'
-englamdring@Will-EH:/mnt/c/Users/wmchr$ cd ~
-englamdring@Will-EH:~$ ls
+exampleuser@example-host:/mnt/c/Users/exampleuser$ cd ~
+exampleuser@example-host:~$ ls
 contact-seek-and-find  moltworker  thedoc
-englamdring@Will-EH:~$ rm thedoc
+exampleuser@example-host:~$ rm thedoc
 rm: cannot remove 'thedoc': Is a directory
-englamdring@Will-EH:~$ rm thedocHow do I delete in a Linux folder?
+exampleuser@example-host:~$ rm thedocHow do I delete in a Linux folder?
 rm: cannot remove 'thedocHow': No such file or directory
 rm: cannot remove 'do': No such file or directory
 rm: cannot remove 'I': No such file or directory
@@ -201,16 +201,16 @@ rm: cannot remove 'in': No such file or directory
 rm: cannot remove 'a': No such file or directory
 rm: cannot remove 'Linux': No such file or directory
 rm: cannot remove 'folder?': No such file or directory
-englamdring@Will-EH:~$ rmdir thedoc
+exampleuser@example-host:~$ rmdir thedoc
 rmdir: failed to remove 'thedoc': Directory not empty
-englamdring@Will-EH:~$ rm -rf thedoc/
-englamdring@Will-EH:~$ # Clone to any location - setup will detect your projects folder
-git clone https://github.com/iamfoehammer/thedoc.git ~/thedoc
+exampleuser@example-host:~$ rm -rf thedoc/
+exampleuser@example-host:~$ # Clone to any location - setup will detect your projects folder
+git clone https://github.com/equityhammer/thedoc.git ~/thedoc
 echo 'export PATH="$HOME/thedoc:$PATH"' >> ~/.bashrc
 echo '[ -f "$HOME/.secrets" ] && source "$HOME/.secrets"' >> ~/.bashrc
 source ~/.bashrc
 thedoc
-Cloning into '/home/englamdring/thedoc'...
+Cloning into '/home/exampleuser/thedoc'...
 remote: Enumerating objects: 71, done.
 remote: Counting objects: 100% (71/71), done.
 remote: Compressing objects: 100% (51/51), done.
@@ -324,14 +324,14 @@ BBBBO>*@@@O+Q@@@a'(&@@@@C c@@@@#-.d@@@Z<J@@@a+  ."..''It*8amuQqkc0dbJl        ,U
 
   Let me scan your drives...
 
-  [scan] Found /mnt/c/Users/wmchr/Documents/GitHub/ (1 folders)
+  [scan] Found /mnt/c/Users/exampleuser/Documents/GitHub/ (1 folders)
   [scan] Found /mnt/c/GitHub/ (27 folders)
 
   Scan complete.
 
   Which one is your projects folder?
 
-    [1] /mnt/c/Users/wmchr/Documents/GitHub/  (1 folder)
+    [1] /mnt/c/Users/exampleuser/Documents/GitHub/  (1 folder)
     [2] /mnt/c/GitHub/  (27 folders)
     [3] Browse to a folder
     [4] Type a path
@@ -345,9 +345,9 @@ BBBBO>*@@@O+Q@@@a'(&@@@@C c@@@@#-.d@@@Z<J@@@a+  ."..''It*8amuQqkc0dbJl        ,U
     [3] dev/  (13 folders)
     [4] etc/  (79 folders)
     [5] home/  (1 folders)
-englamdring@Will-EH:~$ cd mnt
+exampleuser@example-host:~$ cd mnt
 -bash: cd: mnt: No such file or directory
-englamdring@Will-EH:~$ thedoc
+exampleuser@example-host:~$ thedoc
 
   ╔════════════════════════════════════════╗
   ║  Emergency Harness Hologram activated  ║
@@ -395,14 +395,14 @@ wns.
 
   Let me scan your drives...
 
-  [scan] Found /mnt/c/Users/wmchr/Documents/GitHub/ (1 folders)
+  [scan] Found /mnt/c/Users/exampleuser/Documents/GitHub/ (1 folders)
   [scan] Found /mnt/c/GitHub/ (27 folders)
 
   Scan complete.
 
   Which one is your projects folder?
 
-    [1] /mnt/c/Users/wmchr/Documents/GitHub/  (1 folder)
+    [1] /mnt/c/Users/exampleuser/Documents/GitHub/  (1 folder)
     [2] /mnt/c/GitHub/  (27 folders)
     [3] Browse to a folder
     [4] Type a path
@@ -420,24 +420,24 @@ wns.
     [3] dev/  (13 folders)
     [4] etc/  (79 folders)
     [5] home/  (1 folders)
-englamdring@Will-EH:~$ rm -rf thedoc/
-englamdring@Will-EH:~$ thedoc
--bash: /home/englamdring/thedoc/thedoc: No such file or directory
-englamdring@Will-EH:~$ mkdir -p ~/.local/bin
-curl -o ~/.local/bin/llm-secrets https://raw.githubusercontent.com/iamfoehammer/thedoc/main/llm-secrets
+exampleuser@example-host:~$ rm -rf thedoc/
+exampleuser@example-host:~$ thedoc
+-bash: /home/exampleuser/thedoc/thedoc: No such file or directory
+exampleuser@example-host:~$ mkdir -p ~/.local/bin
+curl -o ~/.local/bin/llm-secrets https://raw.githubusercontent.com/equityhammer/thedoc/main/llm-secrets
 chmod +x ~/.local/bin/llm-secrets
 echo '[ -f "$HOME/.secrets" ] && source "$HOME/.secrets"' >> ~/.bashrc
 source ~/.bashrc
   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
                                  Dload  Upload   Total   Spent    Left  Speed
 100  5484  100  5484    0     0  21858      0 --:--:-- --:--:-- --:--:-- 21848
-englamdring@Will-EH:~$ # Clone to any location - setup will detect your projects folder
-git clone https://github.com/iamfoehammer/thedoc.git ~/thedoc
+exampleuser@example-host:~$ # Clone to any location - setup will detect your projects folder
+git clone https://github.com/equityhammer/thedoc.git ~/thedoc
 echo 'export PATH="$HOME/thedoc:$PATH"' >> ~/.bashrc
 echo '[ -f "$HOME/.secrets" ] && source "$HOME/.secrets"' >> ~/.bashrc
 source ~/.bashrc
 thedoc
-Cloning into '/home/englamdring/thedoc'...
+Cloning into '/home/exampleuser/thedoc'...
 remote: Enumerating objects: 77, done.
 remote: Counting objects: 100% (77/77), done.
 remote: Compressing objects: 100% (55/55), done.
@@ -485,14 +485,14 @@ Resolving deltas: 100% (27/27), done.
 
   Let me scan your drives...
 
-  [scan] Found /mnt/c/Users/wmchr/Documents/GitHub/ (1 folders)
+  [scan] Found /mnt/c/Users/exampleuser/Documents/GitHub/ (1 folders)
   [scan] Found /mnt/c/GitHub/ (27 folders)
 
   Scan complete.
 
   Which one is your projects folder?
 
-    [1] /mnt/c/Users/wmchr/Documents/GitHub/  (1 folder)
+    [1] /mnt/c/Users/exampleuser/Documents/GitHub/  (1 folder)
     [2] /mnt/c/GitHub/  (27 folders)
     [3] Browse to a folder
     [4] Type a path
@@ -617,14 +617,14 @@ Resolving deltas: 100% (27/27), done.
     [2] Full - interactive audit of your current setup
 
   > 2
-englamdring@Will-EH:~$ rm -rf thedoc/
-englamdring@Will-EH:~$ # Clone to any location - setup will detect your projects folder
-git clone https://github.com/iamfoehammer/thedoc.git ~/thedoc
+exampleuser@example-host:~$ rm -rf thedoc/
+exampleuser@example-host:~$ # Clone to any location - setup will detect your projects folder
+git clone https://github.com/equityhammer/thedoc.git ~/thedoc
 echo 'export PATH="$HOME/thedoc:$PATH"' >> ~/.bashrc
 echo '[ -f "$HOME/.secrets" ] && source "$HOME/.secrets"' >> ~/.bashrc
 source ~/.bashrc
 thedoc
-Cloning into '/home/englamdring/thedoc'...
+Cloning into '/home/exampleuser/thedoc'...
 remote: Enumerating objects: 83, done.
 remote: Counting objects: 100% (83/83), done.
 remote: Compressing objects: 100% (59/59), done.
@@ -738,14 +738,14 @@ BBBBO>*@@@O+Q@@@a'(&@@@@C c@@@@#-.d@@@Z<J@@@a+  ."..''It*8amuQqkc0dbJl        ,U
 
   Let me scan your drives...
 
-  [scan] Found /mnt/c/Users/wmchr/Documents/GitHub/ (1 folders)
+  [scan] Found /mnt/c/Users/exampleuser/Documents/GitHub/ (1 folders)
   [scan] Found /mnt/c/GitHub/ (27 folders)
 
   Scan complete.
 
   Which one is your projects folder?
 
-    [1] /mnt/c/Users/wmchr/Documents/GitHub/  (1 folder)
+    [1] /mnt/c/Users/exampleuser/Documents/GitHub/  (1 folder)
     [2] /mnt/c/GitHub/  (27 folders)
     [3] Browse to a folder
     [4] Type a path
@@ -1036,7 +1036,7 @@ BBBBO>*@@@O+Q@@@a'(&@@@@C c@@@@#-.d@@@Z<J@@@a+  ."..''It*8amuQqkc0dbJl        ,U
 
  Do you want to proceed?
  ❯ 1. Yes
-   2. Yes, and allow access to englamdring/ and tmux -V commands
+   2. Yes, and allow access to exampleuser/ and tmux -V commands
    3. No
 
  Esc to cancel · Tab to amend · ctrl+e to explain
@@ -1186,10 +1186,10 @@ BBBBO>*@@@O+Q@@@a'(&@@@@C c@@@@#-.d@@@Z<J@@@a+  ."..''It*8amuQqkc0dbJl        ,U
 
   Proposed fix: Set your name and email globally. What name and email should I use? (These go in ~/.gitconfig.)
 
-❯  Name: iamfoehammer
-    Email: englamdring@gmail.com
+❯  Name: equityhammer
+    Email: user@example.com
 
-● Bash(git config --global user.name "iamfoehammer" && git config --global user.email "englamdring@gmail.com")
+● Bash(git config --global user.name "equityhammer" && git config --global user.email "user@example.com")
   ⎿  (No output)
 
 ● Done.
@@ -1203,7 +1203,7 @@ BBBBO>*@@@O+Q@@@a'(&@@@@C c@@@@#-.d@@@Z<J@@@a+  ."..''It*8amuQqkc0dbJl        ,U
 
   Two options here:
 
-  - Quick fix: Just update the comment on your existing RSA key to englamdring@gmail.com (no key regeneration, no impact
+  - Quick fix: Just update the comment on your existing RSA key to user@example.com (no key regeneration, no impact
    on anything using the key)
   - Full fix: Generate a new Ed25519 key with the correct email (you'd need to update GitHub/any remotes with the new
   public key)
@@ -1361,7 +1361,7 @@ BBBBO>*@@@O+Q@@@a'(&@@@@C c@@@@#-.d@@@Z<J@@@a+  ."..''It*8amuQqkc0dbJl        ,U
   minimal config from scratch.
 
 ● Write(~/.tmux.conf)
-  ⎿  Wrote 28 lines to ../../../../home/englamdring/.tmux.conf
+  ⎿  Wrote 28 lines to ../../../../home/exampleuser/.tmux.conf
       1 # Enable mouse support (scroll, click panes, resize)
       2 set -g mouse on
       3

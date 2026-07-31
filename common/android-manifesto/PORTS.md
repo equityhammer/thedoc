@@ -3,7 +3,7 @@
 # Local-server port registry
 
 Every app's `dist/serve_<app>.py` binds a unique port on the Tailscale net
-(`100.107.198.124`). Claim a port here **before** standing up a new server so two
+(`100.64.0.10`). Claim a port here **before** standing up a new server so two
 apps never collide. Ports below are re-derived from each server's actual source
 (not from memory) as of 2026-05-24.
 
@@ -18,7 +18,7 @@ apps never collide. Ports below are re-derived from each server's actual source
 
 ## Unassigned / TODO
 
-- **hymn-recognizer** — no `dist/` server yet. When wiring the sprint loop, claim a
+- **hymn-recognizer**: no `dist/` server yet. When wiring the sprint loop, claim a
   free port here first (e.g. next in the `41101+` range to stay clear of the cluster
   above).
 

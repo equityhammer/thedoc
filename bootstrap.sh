@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # thedoc bootstrap - one-liner installer
-# bash <(curl -fsSL https://raw.githubusercontent.com/iamfoehammer/thedoc/main/bootstrap.sh)
+# bash <(curl -fsSL https://raw.githubusercontent.com/equityhammer/thedoc/main/bootstrap.sh)
 set -euo pipefail
 
 case "${1:-}" in
@@ -13,7 +13,7 @@ case "${1:-}" in
 thedoc bootstrap
 
 Usage:
-  bash <(curl -fsSL https://raw.githubusercontent.com/iamfoehammer/thedoc/main/bootstrap.sh)
+  bash <(curl -fsSL https://raw.githubusercontent.com/equityhammer/thedoc/main/bootstrap.sh)
 
 What it does:
   1. Clones the thedoc repo to a temp directory.
@@ -27,7 +27,7 @@ Requirements:
   - bash 3.2+ (macOS default; any modern Linux is 4+/5+)
 
 Manual install (no curl pipe):
-  git clone https://github.com/iamfoehammer/thedoc.git ~/GitHub/thedoc
+  git clone https://github.com/equityhammer/thedoc.git ~/GitHub/thedoc
   echo 'export PATH="$HOME/GitHub/thedoc:$PATH"' >> ~/.bashrc
   echo '[ -f "$HOME/.secrets" ] && source "$HOME/.secrets"' >> ~/.bashrc
   source ~/.bashrc
@@ -47,7 +47,7 @@ EOF
         ;;
 esac
 
-REPO="https://github.com/iamfoehammer/thedoc.git"
+REPO="https://github.com/equityhammer/thedoc.git"
 
 # Preflight BEFORE mktemp so a missing git doesn't leave an orphaned
 # /tmp/tmp.XXXXXX/ directory behind. (Minor on a single host, but

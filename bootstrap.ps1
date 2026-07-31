@@ -2,7 +2,7 @@
 # One-liner installer for native Windows PowerShell 7+ users.
 #
 # Usage:
-#   irm https://raw.githubusercontent.com/iamfoehammer/thedoc/main/bootstrap.ps1 | iex
+#   irm https://raw.githubusercontent.com/equityhammer/thedoc/main/bootstrap.ps1 | iex
 #
 # This is the Windows-native counterpart to bootstrap.sh. Linux/macOS/WSL/Git
 # Bash users should use the bash one-liner from the README instead.
@@ -17,7 +17,7 @@ if ($args.Count -gt 0 -and $args[0] -in @('--help', '-h', 'help', '/?', '-?')) {
 thedoc bootstrap (PowerShell)
 
 Usage:
-  irm https://raw.githubusercontent.com/iamfoehammer/thedoc/main/bootstrap.ps1 | iex
+  irm https://raw.githubusercontent.com/equityhammer/thedoc/main/bootstrap.ps1 | iex
 
 What it does:
   1. Clones the thedoc repo to a temp directory.
@@ -32,7 +32,7 @@ Requirements:
   - PowerShell 7+ (pwsh, not Windows PowerShell 5.1)
 
 Manual install (no irm | iex):
-  git clone https://github.com/iamfoehammer/thedoc.git $HOME\GitHub\thedoc
+  git clone https://github.com/equityhammer/thedoc.git $HOME\GitHub\thedoc
   $env:PATH = "$HOME\GitHub\thedoc;$env:PATH"
   Add-Content $PROFILE.CurrentUserAllHosts 'if (Test-Path "$HOME/.secrets.ps1") { try { . "$HOME/.secrets.ps1" } catch { Write-Host "~/.secrets.ps1: $($_.Exception.Message)" -ForegroundColor Yellow } }'
   .\thedoc.ps1
@@ -51,7 +51,7 @@ if ($args.Count -gt 0) {
     exit 1
 }
 
-$Repo   = 'https://github.com/iamfoehammer/thedoc.git'
+$Repo   = 'https://github.com/equityhammer/thedoc.git'
 $TmpDir = Join-Path ([System.IO.Path]::GetTempPath()) "thedoc-$([guid]::NewGuid())"
 
 # ── Preflight ────────────────────────────────────────────────────────
