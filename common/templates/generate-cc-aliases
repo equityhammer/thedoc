@@ -75,6 +75,14 @@ _cc_tmux() {
     shift 2
     local cmd="$*"
 
+    # Name the window after the project folder rather than the short
+    # suffix, so each tab in the "claude" session is identifiable at a
+    # glance (e.g. "command-line-voice" instead of "clv"). Applied here
+    # in the shared helper so every cc-/cn-/cr-/dcc-/dcn-/dcr- variant
+    # and the bare commands stay consistent, and used for creation,
+    # dedup, and selection alike.
+    win_name="$(basename "$work_dir")"
+
     # If the session doesn't exist, create it detached
     if ! tmux has-session -t "$session" 2>/dev/null; then
         tmux new-session -d -s "$session" -n "$win_name" -c "$work_dir" "$cmd"
