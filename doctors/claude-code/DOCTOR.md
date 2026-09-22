@@ -97,7 +97,7 @@ Read the Framework path from CLAUDE.md first. Templates live at `<framework>/com
 - Check: does `~/.tmux.conf` exist?
 - If not: offer to install the framework template (`<framework>/common/templates/tmux.conf`)
 - If yes: compare against the template and suggest improvements
-- Key features in template: OSC 52 clipboard, drag-to-copy, right-click paste, double/triple-click, cheat sheet status bar, emacs copy mode
+- Key features in template: OSC 52 clipboard, drag-to-copy, right-click paste, double/triple-click, cheat sheet status bar, emacs copy mode, session save/restore that relaunches claude (needs `tmux-resurrect-pane-command.sh` in `~/.tmux/`)
 
 ### 2. Project Aliases
 - Check: does `~/.cc-project-aliases` exist? Is `generate-cc-aliases` installed?
@@ -237,6 +237,7 @@ The framework includes these templates at `<framework>/common/templates/`:
 |----------|-------------|
 | `tmux.conf` | Windows/WSL2-friendly tmux config with OSC 52 clipboard, status bar cheat sheet, drag-to-copy, right-click paste |
 | `generate-cc-aliases` | Auto-generates cc-*/cn-*/dcc-*/dcn-* project shortcuts for tmux windows |
+| `tmux-resurrect-pane-command.sh` | tmux-resurrect save strategy so restores relaunch claude in `cc-*` windows; goes in `~/.tmux/` |
 | `tmux-session-shortcuts.sh` | `t`, `t <name>`, `t<name>` shortcuts to jump to (or create) whole tmux sessions by prefix |
 | `ssh-config-examples` | SSH Host entry patterns for quick access to machines |
 
